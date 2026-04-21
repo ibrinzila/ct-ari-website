@@ -1,0 +1,92 @@
+---
+import { getMeetingLaunchContent, meetingLaunchConfig, type MeetingLaunchLang } from '@/data/meetingLaunch';
+
+interface Props {
+  lang: MeetingLaunchLang;
+  meetingPageHref: string;
+}
+
+const { lang, meetingPageHref } = Astro.props;
+const content = getMeetingLaunchContent(lang);
+const hasJoinLink = Boolean(meetingLaunchConfig.joinUrl);
+const primaryHref = hasJoinLink ? meetingLaunchConfig.joinUrl! : meetingPageHref;
+const primaryLabel = hasJoinLink ? content.observeLabel : content.detailsLabel;
+const secondaryHref = hasJoinLink ? meetingPageHref : meetingLaunchConfig.governanceUrl;
+const secondaryLabel = hasJoinLink ? content.detailsLabel : content.fullPageLabel;
+---
+
+<section
+  class="hidden border-b border-brand-blue/10 bg-white/95"
+  data-meeting-spotlight
+  data-active-from={meetingLaunchConfig.activeFromUtc}
+  data-active-until={meetingLaunchConfig.activeUntilUtc}
+  data-preview-key={meetingLaunchConfig.previewQueryKey}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="overflow-hidden rounded-[2rem] border border-brand-blue/10 bg-gradient-to-br from-brand-blue via-brand-blueLight to-sky-700 text-white shadow-[0_25px_80px_rgba(37,99,235,0.18)]">
+      <div class="grid gap-8 px-6 py-8 md:grid-cols-[1.6fr_1fr] md:px-10 md:py-10">
+        <div class="space-y-5">
+          <span class="inline-flex items-center rounded-full bg-white/15 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-white/90">
+            {content.banner}
+          </span>
+          <div class="space-y-3">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand-amber">{content.spotlightLabel}</p>
+            <h2 class="max-w-3xl text-3xl font-extrabold leading-tight md:text-4xl">{content.title}</h2>
+            <p class="max-w-2xl text-base leading-7 text-blue-50/90 md:text-lg">{content.summary}</p>
+          </div>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <a
+              href={primaryHref}
+              target={hasJoinLink ? '_blank' : undefined}
+              rel={hasJoinLink ? 'noreferrer noopener' : undefined}
+              class="inline-flex items-center justify-center rounded-2xl bg-brand-amber px-6 py-3 text-sm font-bold text-brand-blue transition-colors hover:bg-brand-amberLight"
+            >
+              {primaryLabel}
+            </a>
+            <a
+              href={secondaryHref}
+              target={!hasJoinLink ? '_blank' : undefined}
+              rel={!hasJoinLink ? 'noreferrer noopener' : undefined}
+              class="inline-flex items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+            >
+              {secondaryLabel}
+            </a>
+          </div>
+        </div>
+        <aside class="rounded-[1.75rem] border border-white/15 bg-white/10 p-5 backdrop-blur">
+          <p class="text-xs font-semibold uppercase tracking-[0.24em] text-brand-amber">{content.governanceLabel}</p>
+          <p class="mt-3 text-lg font-semibold leading-7">{content.spotlightBody}</p>
+          <div class="mt-5 rounded-2xl bg-white/10 p-4 text-sm leading-6 text-blue-50/90">
+            {content.scheduleLabel}
+          </div>
+          <p class="mt-4 text-xs leading-5 text-blue-100/80">{content.previewHint}</p>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const spotlight = document.querySelector('[data-meeting-spotlight]');
+    if (!spotlight) return;
+
+    const activeFrom = spotlight.getAttribute('data-active-from');
+    const activeUntil = spotlight.getAttribute('data-active-until');
+    const previewKey = spotlight.getAttribute('data-preview-key') || 'previewMeeting';
+    const params = new URLSearchParams(window.location.search);
+    const forcePreview = params.get(previewKey) === '1';
+
+    if (forcePreview) {
+      spotlight.classList.remove('hidden');
+      return;
+    }
+
+    const now = Date.now();
+    const start = activeFrom ? Date.parse(activeFrom) : Number.NaN;
+    const end = activeUntil ? Date.parse(activeUntil) : Number.NaN;
+    if (Number.isFinite(start) && Number.isFinite(end) && now >= start && now <= end) {
+      spotlight.classList.remove('hidden');
+    }
+  })();
+</script>

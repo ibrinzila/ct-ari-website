@@ -1,0 +1,208 @@
+---
+import { getMeetingLaunchContent, meetingLaunchConfig, type MeetingLaunchLang } from '@/data/meetingLaunch';
+
+interface Props {
+  lang: MeetingLaunchLang;
+}
+
+const { lang } = Astro.props;
+const content = getMeetingLaunchContent(lang);
+const governanceUrl = meetingLaunchConfig.governanceUrl;
+const embedId = `dopomoha-governance-embed-${lang}`;
+---
+
+<section class="bg-gradient-to-br from-brand-blue via-brand-blueLight to-sky-700 text-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+    <div class="max-w-4xl space-y-6">
+      <span class="inline-flex items-center rounded-full bg-brand-amber px-4 py-1 text-xs font-bold uppercase tracking-[0.28em] text-brand-blue">
+        {content.banner}
+      </span>
+      <div class="space-y-4">
+        <h1 class="text-4xl font-extrabold leading-tight md:text-5xl">{content.meetingPageTitle}</h1>
+        <p class="max-w-3xl text-lg leading-8 text-blue-50/90">{content.meetingPageIntro}</p>
+      </div>
+      <div class="inline-flex max-w-3xl rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-sm leading-6 text-blue-50/90">
+        {content.scheduleLabel}
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        {meetingLaunchConfig.joinUrl ? (
+          <a
+            href={meetingLaunchConfig.joinUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            class="inline-flex items-center justify-center rounded-2xl bg-brand-amber px-6 py-3 text-sm font-bold text-brand-blue transition-colors hover:bg-brand-amberLight"
+          >
+            {content.observeLabel}
+          </a>
+        ) : (
+          <div class="rounded-2xl border border-brand-amber/30 bg-brand-amber/15 px-5 py-4 text-sm font-medium text-brand-amber">
+            {content.observePendingLabel}
+          </div>
+        )}
+        <a
+          href={governanceUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          class="inline-flex items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+        >
+          {content.fullPageLabel}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-brand-gray py-14">
+  <div class="max-w-6xl mx-auto grid gap-8 px-4 sm:px-6 lg:px-8 lg:grid-cols-[1.25fr_0.75fr]">
+    <article class="rounded-[2rem] border border-brand-blue/10 bg-white p-6 shadow-sm md:p-8">
+      <div class="space-y-4">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.24em] text-brand-amber">{content.embedTitle}</p>
+          <h2 class="mt-2 text-2xl font-bold text-brand-blue md:text-3xl">{content.governanceLabel}</h2>
+        </div>
+        <p class="text-base leading-7 text-gray-600">{content.embedBody}</p>
+        {!meetingLaunchConfig.joinUrl && (
+          <div class="rounded-2xl border border-brand-amber/20 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900">
+            {content.observePendingBody}
+          </div>
+        )}
+      </div>
+
+      <div class="mt-8 overflow-hidden rounded-[1.75rem] border border-brand-blue/10 bg-slate-50">
+      <div
+          id={embedId}
+          data-governance-url={governanceUrl}
+          data-min-height={meetingLaunchConfig.embedMinHeight}
+          data-fallback-body={content.embedBody}
+          data-fallback-button={content.fullPageLabel}
+          class="min-h-[320px]"
+        >
+          <div class="flex min-h-[320px] items-center justify-center px-6 py-10 text-center text-sm leading-6 text-gray-500">
+            Se încarcă spațiul governance…
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+        <a
+          href={governanceUrl}
+          target="_blank"
+          rel="noreferrer noopener"
+          class="inline-flex items-center justify-center rounded-2xl bg-brand-blue px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-blueLight"
+        >
+          {content.fullPageLabel}
+        </a>
+        {meetingLaunchConfig.joinUrl && (
+          <a
+            href={meetingLaunchConfig.joinUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            class="inline-flex items-center justify-center rounded-2xl border border-brand-blue/15 bg-white px-6 py-3 text-sm font-semibold text-brand-blue transition-colors hover:border-brand-blue hover:bg-brand-gray"
+          >
+            {content.observeLabel}
+          </a>
+        )}
+      </div>
+    </article>
+
+    <aside class="space-y-6">
+      <article class="rounded-[2rem] border border-brand-blue/10 bg-white p-6 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-brand-amber">{content.inviteOnlyTitle}</p>
+        <p class="mt-3 text-base leading-7 text-gray-600">{content.inviteOnlyBody}</p>
+      </article>
+
+      <article class="rounded-[2rem] border border-brand-blue/10 bg-brand-blue px-6 py-7 text-white shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-brand-amber">Governance public</p>
+        <p class="mt-3 text-base leading-7 text-blue-50/90">{content.meetingPageNotice}</p>
+      </article>
+    </aside>
+  </div>
+</section>
+
+<script is:inline define:vars={{ embedId }}>
+  (() => {
+    const root = document.getElementById(embedId);
+    if (!root) return;
+
+    const governanceUrl = root.getAttribute('data-governance-url');
+    const minHeight = root.getAttribute('data-min-height') || '980px';
+    const fallbackBody = root.getAttribute('data-fallback-body') || 'Embedul governance nu a putut fi încărcat aici.';
+    const fallbackButton = root.getAttribute('data-fallback-button') || 'Open governance';
+    if (!governanceUrl) return;
+
+    const normalizeUrl = (rawUrl) => {
+      const resolved = new URL(rawUrl, window.location.href);
+      resolved.searchParams.set('embed', '1');
+      return resolved.toString();
+    };
+
+    const fallback = () => {
+      root.innerHTML = `
+        <div class="flex min-h-[320px] flex-col items-center justify-center gap-4 px-6 py-10 text-center">
+          <p class="max-w-xl text-sm leading-6 text-gray-600">${fallbackBody}</p>
+          <a href="${governanceUrl}" target="_blank" rel="noreferrer noopener" class="inline-flex items-center justify-center rounded-2xl bg-brand-blue px-5 py-3 text-sm font-semibold text-white">${fallbackButton}</a>
+        </div>
+      `;
+    };
+
+    const mount = () => {
+      try {
+        const iframe = document.createElement('iframe');
+        iframe.src = normalizeUrl(governanceUrl);
+        iframe.loading = 'lazy';
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        iframe.style.width = '100%';
+        iframe.style.border = '0';
+        iframe.style.minHeight = minHeight;
+        iframe.setAttribute('scrolling', 'no');
+        iframe.setAttribute('allow', 'clipboard-read; clipboard-write');
+
+        const allowedOrigin = new URL(iframe.src).origin;
+        let receivedSignal = false;
+        let settled = false;
+        const onMessage = (event) => {
+          if (event.origin !== allowedOrigin || !event.data || typeof event.data !== 'object') {
+            return;
+          }
+
+          if (event.data.type === 'dopomoha:ready') {
+            receivedSignal = true;
+            return;
+          }
+
+          if (event.data.type === 'dopomoha:resize' && Number.isFinite(event.data.height)) {
+            receivedSignal = true;
+            iframe.style.height = `${Math.max(event.data.height, 320)}px`;
+          }
+
+          if (event.data.type === 'dopomoha:breakout' && typeof event.data.href === 'string') {
+            window.location.assign(event.data.href);
+          }
+        };
+
+        window.addEventListener('message', onMessage);
+        iframe.addEventListener('error', () => {
+          if (settled) return;
+          settled = true;
+          fallback();
+        }, { once: true });
+        root.replaceChildren(iframe);
+        window.setTimeout(() => {
+          if (!receivedSignal && !settled) {
+            settled = true;
+            fallback();
+          }
+        }, 3000);
+      } catch (error) {
+        console.error('Failed to mount Dopomoha embed', error);
+        fallback();
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      mount();
+    } else {
+      window.addEventListener('load', mount, { once: true });
+    }
+  })();
+</script>
