@@ -29,7 +29,7 @@ export interface MeetingLaunchConfig {
   previewQueryKey: string;
   dopomohaHost: string;
   governanceUrl: string;
-  joinUrl: string | null;
+  governanceFeedUrl: string;
   embedMinHeight: string;
   routes: {
     rootRo: string;
@@ -45,7 +45,7 @@ export const meetingLaunchConfig: MeetingLaunchConfig = {
   previewQueryKey: 'previewMeeting',
   dopomohaHost: 'https://dopomoha.md',
   governanceUrl: 'https://dopomoha.md/gov/ct-ari',
-  joinUrl: null,
+  governanceFeedUrl: 'https://dopomoha.md/gov/ct-ari/public-feed.json',
   embedMinHeight: '980px',
   routes: {
     rootRo: '/sedinta-22-aprilie',

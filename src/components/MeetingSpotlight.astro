@@ -8,11 +8,7 @@ interface Props {
 
 const { lang, meetingPageHref } = Astro.props;
 const content = getMeetingLaunchContent(lang);
-const hasJoinLink = Boolean(meetingLaunchConfig.joinUrl);
-const primaryHref = hasJoinLink ? meetingLaunchConfig.joinUrl! : meetingPageHref;
-const primaryLabel = hasJoinLink ? content.observeLabel : content.detailsLabel;
-const secondaryHref = hasJoinLink ? meetingPageHref : meetingLaunchConfig.governanceUrl;
-const secondaryLabel = hasJoinLink ? content.detailsLabel : content.fullPageLabel;
+const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
 ---
 
 <section
@@ -21,6 +17,13 @@ const secondaryLabel = hasJoinLink ? content.detailsLabel : content.fullPageLabe
   data-active-from={meetingLaunchConfig.activeFromUtc}
   data-active-until={meetingLaunchConfig.activeUntilUtc}
   data-preview-key={meetingLaunchConfig.previewQueryKey}
+  data-feed-url={meetingLaunchConfig.governanceFeedUrl}
+  data-meeting-page-href={meetingPageHref}
+  data-governance-url={meetingLaunchConfig.governanceUrl}
+  data-locale={locale}
+  data-observe-label={content.observeLabel}
+  data-details-label={content.detailsLabel}
+  data-full-page-label={content.fullPageLabel}
 >
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="overflow-hidden rounded-[2rem] border border-brand-blue/10 bg-gradient-to-br from-brand-blue via-brand-blueLight to-sky-700 text-white shadow-[0_25px_80px_rgba(37,99,235,0.18)]">
@@ -36,27 +39,27 @@ const secondaryLabel = hasJoinLink ? content.detailsLabel : content.fullPageLabe
           </div>
           <div class="flex flex-col gap-3 sm:flex-row">
             <a
-              href={primaryHref}
-              target={hasJoinLink ? '_blank' : undefined}
-              rel={hasJoinLink ? 'noreferrer noopener' : undefined}
+              href={meetingPageHref}
+              data-spotlight-primary
               class="inline-flex items-center justify-center rounded-2xl bg-brand-amber px-6 py-3 text-sm font-bold text-brand-blue transition-colors hover:bg-brand-amberLight"
             >
-              {primaryLabel}
+              {content.detailsLabel}
             </a>
             <a
-              href={secondaryHref}
-              target={!hasJoinLink ? '_blank' : undefined}
-              rel={!hasJoinLink ? 'noreferrer noopener' : undefined}
+              href={meetingLaunchConfig.governanceUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              data-spotlight-secondary
               class="inline-flex items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20"
             >
-              {secondaryLabel}
+              {content.fullPageLabel}
             </a>
           </div>
         </div>
         <aside class="rounded-[1.75rem] border border-white/15 bg-white/10 p-5 backdrop-blur">
           <p class="text-xs font-semibold uppercase tracking-[0.24em] text-brand-amber">{content.governanceLabel}</p>
           <p class="mt-3 text-lg font-semibold leading-7">{content.spotlightBody}</p>
-          <div class="mt-5 rounded-2xl bg-white/10 p-4 text-sm leading-6 text-blue-50/90">
+          <div class="mt-5 rounded-2xl bg-white/10 p-4 text-sm leading-6 text-blue-50/90" data-spotlight-schedule>
             {content.scheduleLabel}
           </div>
           <p class="mt-4 text-xs leading-5 text-blue-100/80">{content.previewHint}</p>
@@ -74,11 +77,85 @@ const secondaryLabel = hasJoinLink ? content.detailsLabel : content.fullPageLabe
     const activeFrom = spotlight.getAttribute('data-active-from');
     const activeUntil = spotlight.getAttribute('data-active-until');
     const previewKey = spotlight.getAttribute('data-preview-key') || 'previewMeeting';
+    const feedUrl = spotlight.getAttribute('data-feed-url');
+    const meetingPageHref = spotlight.getAttribute('data-meeting-page-href') || '/';
+    const governanceUrl = spotlight.getAttribute('data-governance-url') || '/';
+    const locale = spotlight.getAttribute('data-locale') || 'ro-MD';
+    const observeLabel = spotlight.getAttribute('data-observe-label') || 'Observe online';
+    const detailsLabel = spotlight.getAttribute('data-details-label') || 'Details';
+    const fullPageLabel = spotlight.getAttribute('data-full-page-label') || 'Open governance';
     const params = new URLSearchParams(window.location.search);
     const forcePreview = params.get(previewKey) === '1';
+    const primary = spotlight.querySelector('[data-spotlight-primary]');
+    const secondary = spotlight.querySelector('[data-spotlight-secondary]');
+    const schedule = spotlight.querySelector('[data-spotlight-schedule]');
+
+    const formatSchedule = (event) => {
+      if (!event?.scheduledStartUtc) {
+        return null;
+      }
+
+      const start = new Date(event.scheduledStartUtc);
+      if (Number.isNaN(start.getTime())) {
+        return null;
+      }
+
+      const base = new Intl.DateTimeFormat(locale, {
+        dateStyle: 'long',
+        timeStyle: 'short',
+        timeZone: 'Europe/Chisinau',
+      }).format(start);
+
+      if (event.location) {
+        return `${base} · ${event.location}`;
+      }
+
+      if (event.remoteJoinUrl) {
+        return `${base} · Online`;
+      }
+
+      return base;
+    };
+
+    const hydrate = async () => {
+      if (!feedUrl) return;
+      try {
+        const response = await fetch(feedUrl, { mode: 'cors' });
+        if (!response.ok) return;
+        const feed = await response.json();
+        const nextEvent = Array.isArray(feed?.upcomingEvents) ? feed.upcomingEvents[0] : null;
+
+        if (schedule) {
+          const nextSchedule = formatSchedule(nextEvent);
+          if (nextSchedule) {
+            schedule.textContent = nextSchedule;
+          }
+        }
+
+        if (feed?.observerUrl && primary && secondary) {
+          primary.href = feed.observerUrl;
+          primary.target = '_blank';
+          primary.rel = 'noreferrer noopener';
+          primary.textContent = observeLabel;
+
+          secondary.href = meetingPageHref;
+          secondary.removeAttribute('target');
+          secondary.removeAttribute('rel');
+          secondary.textContent = detailsLabel;
+        } else if (secondary) {
+          secondary.href = governanceUrl;
+          secondary.target = '_blank';
+          secondary.rel = 'noreferrer noopener';
+          secondary.textContent = fullPageLabel;
+        }
+      } catch (error) {
+        console.error('Failed to hydrate meeting spotlight', error);
+      }
+    };
 
     if (forcePreview) {
       spotlight.classList.remove('hidden');
+      hydrate();
       return;
     }
 
@@ -87,6 +164,7 @@ const secondaryLabel = hasJoinLink ? content.detailsLabel : content.fullPageLabe
     const end = activeUntil ? Date.parse(activeUntil) : Number.NaN;
     if (Number.isFinite(start) && Number.isFinite(end) && now >= start && now <= end) {
       spotlight.classList.remove('hidden');
+      hydrate();
     }
   })();
 </script>

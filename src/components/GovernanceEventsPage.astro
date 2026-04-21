@@ -1,0 +1,194 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { meetingLaunchConfig, type MeetingLaunchLang } from '@/data/meetingLaunch';
+
+interface Props {
+  lang: MeetingLaunchLang;
+  title: string;
+  subtitle: string;
+  emptyLabel: string;
+  loadingLabel: string;
+  typeMeetingLabel: string;
+  typeSessionLabel: string;
+  observeLabel: string;
+  fullPageLabel: string;
+}
+
+const {
+  lang,
+  title,
+  subtitle,
+  emptyLabel,
+  loadingLabel,
+  typeMeetingLabel,
+  typeSessionLabel,
+  observeLabel,
+  fullPageLabel,
+} = Astro.props;
+
+const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
+---
+
+<BaseLayout title={title}>
+  <section class="bg-brand-blue text-white py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">{title}</h1>
+      <p class="text-blue-200 text-lg">{subtitle}</p>
+    </div>
+  </section>
+
+  <section
+    class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
+    data-governance-events
+    data-feed-url={meetingLaunchConfig.governanceFeedUrl}
+    data-governance-url={meetingLaunchConfig.governanceUrl}
+    data-locale={locale}
+    data-empty-label={emptyLabel}
+    data-loading-label={loadingLabel}
+    data-type-meeting={typeMeetingLabel}
+    data-type-session={typeSessionLabel}
+    data-observe-label={observeLabel}
+    data-full-page-label={fullPageLabel}
+  >
+    <div class="rounded-2xl border border-brand-blue/10 bg-brand-gray p-8 text-center text-gray-500" data-events-loading>
+      {loadingLabel}
+    </div>
+    <div class="hidden space-y-6" data-events-list></div>
+    <p class="hidden text-gray-400 text-center py-16" data-events-empty>{emptyLabel}</p>
+  </section>
+</BaseLayout>
+
+<script is:inline define:vars={{ locale }}>
+  (() => {
+    const root = document.querySelector('[data-governance-events]');
+    if (!root) return;
+
+    const feedUrl = root.getAttribute('data-feed-url');
+    const governanceUrl = root.getAttribute('data-governance-url') || '/';
+    const emptyLabel = root.getAttribute('data-empty-label') || 'No events';
+    const typeMeeting = root.getAttribute('data-type-meeting') || 'Meeting';
+    const typeSession = root.getAttribute('data-type-session') || 'Session';
+    const observeLabel = root.getAttribute('data-observe-label') || 'Observe online';
+    const fullPageLabel = root.getAttribute('data-full-page-label') || 'Open governance';
+    const loading = root.querySelector('[data-events-loading]');
+    const list = root.querySelector('[data-events-list]');
+    const empty = root.querySelector('[data-events-empty]');
+
+    const formatDate = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return value || '';
+      }
+
+      return new Intl.DateTimeFormat(locale, {
+        dateStyle: 'long',
+        timeStyle: 'short',
+        timeZone: 'Europe/Chisinau',
+      }).format(date);
+    };
+
+    const formatLocation = (event) => {
+      if (event.location) return event.location;
+      if (event.remoteJoinUrl) return 'Online';
+      return '';
+    };
+
+    const renderCard = (event) => {
+      const wrapper = document.createElement('article');
+      wrapper.className = 'bg-brand-gray rounded-2xl p-6 border border-gray-100 hover:shadow-sm transition-shadow';
+
+      const badge = document.createElement('span');
+      badge.className = 'inline-block text-xs font-semibold bg-brand-amber/20 text-brand-blue px-2 py-1 rounded-full mb-3';
+      badge.textContent = event.sourceKind === 'governance-meeting' ? typeMeeting : typeSession;
+      wrapper.appendChild(badge);
+
+      const title = document.createElement('h3');
+      title.className = 'font-bold text-gray-900 text-lg mb-1';
+      title.textContent = event.title;
+      wrapper.appendChild(title);
+
+      const meta = document.createElement('div');
+      meta.className = 'text-sm text-gray-500 flex flex-wrap items-center gap-4';
+      meta.innerHTML = `<span>📅 ${formatDate(event.scheduledStartUtc)}</span>`;
+      const location = formatLocation(event);
+      if (location) {
+        meta.innerHTML += `<span>📍 ${location}</span>`;
+      }
+      wrapper.appendChild(meta);
+
+      if (event.scopeDisplayLabel) {
+        const scope = document.createElement('p');
+        scope.className = 'mt-3 text-sm leading-6 text-gray-600';
+        scope.textContent = event.scopeDisplayLabel;
+        wrapper.appendChild(scope);
+      }
+
+      const actions = document.createElement('div');
+      actions.className = 'mt-4 flex flex-col gap-3 sm:flex-row';
+
+      const governanceLink = document.createElement('a');
+      governanceLink.href = governanceUrl;
+      governanceLink.target = '_blank';
+      governanceLink.rel = 'noreferrer noopener';
+      governanceLink.className = 'inline-flex items-center justify-center rounded-2xl bg-brand-blue px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-blueLight';
+      governanceLink.textContent = fullPageLabel;
+      actions.appendChild(governanceLink);
+
+      if (event.remoteJoinUrl) {
+        const observeLink = document.createElement('a');
+        observeLink.href = event.remoteJoinUrl;
+        observeLink.target = '_blank';
+        observeLink.rel = 'noreferrer noopener';
+        observeLink.className = 'inline-flex items-center justify-center rounded-2xl border border-brand-blue/15 bg-white px-5 py-3 text-sm font-semibold text-brand-blue transition-colors hover:border-brand-blue hover:bg-brand-gray';
+        observeLink.textContent = observeLabel;
+        actions.appendChild(observeLink);
+      }
+
+      wrapper.appendChild(actions);
+      return wrapper;
+    };
+
+    const setEmpty = () => {
+      loading?.classList.add('hidden');
+      list?.classList.add('hidden');
+      if (empty) {
+        empty.textContent = emptyLabel;
+        empty.classList.remove('hidden');
+      }
+    };
+
+    const hydrate = async () => {
+      if (!feedUrl || !list) {
+        setEmpty();
+        return;
+      }
+
+      try {
+        const response = await fetch(feedUrl, { mode: 'cors' });
+        if (!response.ok) {
+          setEmpty();
+          return;
+        }
+
+        const feed = await response.json();
+        const events = Array.isArray(feed?.upcomingEvents) ? feed.upcomingEvents : [];
+        if (events.length === 0) {
+          setEmpty();
+          return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        events.forEach((event) => fragment.appendChild(renderCard(event)));
+        list.replaceChildren(fragment);
+        loading?.classList.add('hidden');
+        empty?.classList.add('hidden');
+        list.classList.remove('hidden');
+      } catch (error) {
+        console.error('Failed to hydrate governance events', error);
+        setEmpty();
+      }
+    };
+
+    hydrate();
+  })();
+</script>

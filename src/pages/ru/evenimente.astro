@@ -1,29 +1,15 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-const events = [
-  { date: '22 Апреля 2026', title: 'Первое учредительное заседание CT-ARI', location: 'Кишинёв (Офлайн)', type: 'Заседание' },
-  { date: '23 Апреля 2026', title: 'Онлайн-информационная сессия для регионов', location: 'Онлайн', type: 'Информирование' },
-];
+import GovernanceEventsPage from '@/components/GovernanceEventsPage.astro';
 ---
-<BaseLayout title="События">
-  <section class="bg-brand-blue text-white py-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">События и новости</h1>
-      <p class="text-blue-200 text-lg">Мероприятия и новости CT-ARI</p>
-    </div>
-  </section>
-  <section class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="space-y-6">
-      {events.map(({ date, title, location, type }) => (
-        <div class="bg-brand-gray rounded-2xl p-6 border border-gray-100">
-          <span class="inline-block text-xs font-semibold bg-brand-amber/20 text-brand-blue px-2 py-1 rounded-full mb-3">{type}</span>
-          <h3 class="font-bold text-gray-900 text-lg mb-1">{title}</h3>
-          <div class="text-sm text-gray-500 flex items-center gap-4">
-            <span>📅 {date}</span>
-            <span>📍 {location}</span>
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-</BaseLayout>
+
+<GovernanceEventsPage
+  lang="ru"
+  title="События и новости"
+  subtitle="Мероприятия CT-ARI, автоматически подтянутые из пространства governance."
+  emptyLabel="Сейчас нет запланированных governance-событий."
+  loadingLabel="Загружаем governance-события…"
+  typeMeetingLabel="Заседание"
+  typeSessionLabel="Сессия"
+  observeLabel="Наблюдать онлайн"
+  fullPageLabel="Открыть governance в отдельной вкладке"
+/>

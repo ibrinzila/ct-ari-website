@@ -1,50 +1,15 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-
-const events = [
-  {
-    date: '22 Aprilie 2026',
-    title: 'Prima ședință de constituire a CT-ARI',
-    location: 'Chișinău (Offline)',
-    type: 'Ședință',
-  },
-  {
-    date: '23 Aprilie 2026',
-    title: 'Sesiune de informare online pentru regiuni',
-    location: 'Online',
-    type: 'Informare',
-  },
-];
+import GovernanceEventsPage from '@/components/GovernanceEventsPage.astro';
 ---
 
-<BaseLayout title="Evenimente">
-  <section class="bg-brand-blue text-white py-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Evenimente & Știri</h1>
-      <p class="text-blue-200 text-lg">Activitățile și noutățile CT-ARI</p>
-    </div>
-  </section>
-
-  <section class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    {events.length > 0 ? (
-      <div class="space-y-6">
-        {events.map(({ date, title, location, type }) => (
-          <div class="bg-brand-gray rounded-2xl p-6 border border-gray-100 hover:shadow-sm transition-shadow">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <span class="inline-block text-xs font-semibold bg-brand-amber/20 text-brand-blue px-2 py-1 rounded-full mb-3">{type}</span>
-                <h3 class="font-bold text-gray-900 text-lg mb-1">{title}</h3>
-                <div class="text-sm text-gray-500 flex items-center gap-4">
-                  <span>📅 {date}</span>
-                  <span>📍 {location}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <p class="text-gray-400 text-center py-16">Nu există evenimente programate momentan.</p>
-    )}
-  </section>
-</BaseLayout>
+<GovernanceEventsPage
+  lang="ro"
+  title="Evenimente & Știri"
+  subtitle="Activitățile și noutățile CT-ARI derivate din spațiul governance."
+  emptyLabel="Nu există evenimente governance programate momentan."
+  loadingLabel="Se încarcă evenimentele governance…"
+  typeMeetingLabel="Ședință"
+  typeSessionLabel="Sesiune"
+  observeLabel="Observă online"
+  fullPageLabel="Deschide governance în pagină separată"
+/>

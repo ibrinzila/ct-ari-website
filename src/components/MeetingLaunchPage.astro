@@ -9,11 +9,22 @@ const { lang } = Astro.props;
 const content = getMeetingLaunchContent(lang);
 const governanceUrl = meetingLaunchConfig.governanceUrl;
 const embedId = `dopomoha-governance-embed-${lang}`;
+const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
 ---
 
 <section class="bg-gradient-to-br from-brand-blue via-brand-blueLight to-sky-700 text-white">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-    <div class="max-w-4xl space-y-6">
+    <div
+      class="max-w-4xl space-y-6"
+      data-meeting-launch
+      data-feed-url={meetingLaunchConfig.governanceFeedUrl}
+      data-governance-url={governanceUrl}
+      data-locale={locale}
+      data-observe-label={content.observeLabel}
+      data-full-page-label={content.fullPageLabel}
+      data-pending-label={content.observePendingLabel}
+      data-pending-body={content.observePendingBody}
+    >
       <span class="inline-flex items-center rounded-full bg-brand-amber px-4 py-1 text-xs font-bold uppercase tracking-[0.28em] text-brand-blue">
         {content.banner}
       </span>
@@ -21,28 +32,18 @@ const embedId = `dopomoha-governance-embed-${lang}`;
         <h1 class="text-4xl font-extrabold leading-tight md:text-5xl">{content.meetingPageTitle}</h1>
         <p class="max-w-3xl text-lg leading-8 text-blue-50/90">{content.meetingPageIntro}</p>
       </div>
-      <div class="inline-flex max-w-3xl rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-sm leading-6 text-blue-50/90">
+      <div class="inline-flex max-w-3xl rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-sm leading-6 text-blue-50/90" data-launch-schedule>
         {content.scheduleLabel}
       </div>
-      <div class="flex flex-col gap-3 sm:flex-row">
-        {meetingLaunchConfig.joinUrl ? (
-          <a
-            href={meetingLaunchConfig.joinUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            class="inline-flex items-center justify-center rounded-2xl bg-brand-amber px-6 py-3 text-sm font-bold text-brand-blue transition-colors hover:bg-brand-amberLight"
-          >
-            {content.observeLabel}
-          </a>
-        ) : (
-          <div class="rounded-2xl border border-brand-amber/30 bg-brand-amber/15 px-5 py-4 text-sm font-medium text-brand-amber">
-            {content.observePendingLabel}
-          </div>
-        )}
+      <div class="flex flex-col gap-3 sm:flex-row" data-launch-top-actions>
+        <div class="rounded-2xl border border-brand-amber/30 bg-brand-amber/15 px-5 py-4 text-sm font-medium text-brand-amber" data-launch-observe-state>
+          {content.observePendingLabel}
+        </div>
         <a
           href={governanceUrl}
           target="_blank"
           rel="noreferrer noopener"
+          data-launch-full-page
           class="inline-flex items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20"
         >
           {content.fullPageLabel}
@@ -61,15 +62,13 @@ const embedId = `dopomoha-governance-embed-${lang}`;
           <h2 class="mt-2 text-2xl font-bold text-brand-blue md:text-3xl">{content.governanceLabel}</h2>
         </div>
         <p class="text-base leading-7 text-gray-600">{content.embedBody}</p>
-        {!meetingLaunchConfig.joinUrl && (
-          <div class="rounded-2xl border border-brand-amber/20 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900">
-            {content.observePendingBody}
-          </div>
-        )}
+        <div class="rounded-2xl border border-brand-amber/20 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900" data-launch-pending-body>
+          {content.observePendingBody}
+        </div>
       </div>
 
       <div class="mt-8 overflow-hidden rounded-[1.75rem] border border-brand-blue/10 bg-slate-50">
-      <div
+        <div
           id={embedId}
           data-governance-url={governanceUrl}
           data-min-height={meetingLaunchConfig.embedMinHeight}
@@ -92,16 +91,7 @@ const embedId = `dopomoha-governance-embed-${lang}`;
         >
           {content.fullPageLabel}
         </a>
-        {meetingLaunchConfig.joinUrl && (
-          <a
-            href={meetingLaunchConfig.joinUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            class="inline-flex items-center justify-center rounded-2xl border border-brand-blue/15 bg-white px-6 py-3 text-sm font-semibold text-brand-blue transition-colors hover:border-brand-blue hover:bg-brand-gray"
-          >
-            {content.observeLabel}
-          </a>
-        )}
+        <div class="hidden" data-launch-bottom-observe></div>
       </div>
     </article>
 
@@ -118,6 +108,126 @@ const embedId = `dopomoha-governance-embed-${lang}`;
     </aside>
   </div>
 </section>
+
+<script is:inline define:vars={{ locale }}>
+  (() => {
+    const root = document.querySelector('[data-meeting-launch]');
+    if (!root) return;
+
+    const feedUrl = root.getAttribute('data-feed-url');
+    const governanceUrl = root.getAttribute('data-governance-url') || '/';
+    const observeLabel = root.getAttribute('data-observe-label') || 'Observe online';
+    const fullPageLabel = root.getAttribute('data-full-page-label') || 'Open governance';
+    const pendingLabel = root.getAttribute('data-pending-label') || 'Link pending';
+    const pendingBody = root.getAttribute('data-pending-body') || '';
+    const observeState = root.querySelector('[data-launch-observe-state]');
+    const topActions = root.querySelector('[data-launch-top-actions]');
+    const fullPageLink = root.querySelector('[data-launch-full-page]');
+    const schedule = root.querySelector('[data-launch-schedule]');
+    const bottomObserve = document.querySelector('[data-launch-bottom-observe]');
+    const pendingBodyCard = document.querySelector('[data-launch-pending-body]');
+
+    const buildObserveLink = (href, primary) => {
+      const link = document.createElement('a');
+      link.href = href;
+      link.target = '_blank';
+      link.rel = 'noreferrer noopener';
+      link.textContent = observeLabel;
+      link.className = primary
+        ? 'inline-flex items-center justify-center rounded-2xl bg-brand-amber px-6 py-3 text-sm font-bold text-brand-blue transition-colors hover:bg-brand-amberLight'
+        : 'inline-flex items-center justify-center rounded-2xl border border-brand-blue/15 bg-white px-6 py-3 text-sm font-semibold text-brand-blue transition-colors hover:border-brand-blue hover:bg-brand-gray';
+      return link;
+    };
+
+    const formatSchedule = (event) => {
+      if (!event?.scheduledStartUtc) {
+        return null;
+      }
+
+      const start = new Date(event.scheduledStartUtc);
+      if (Number.isNaN(start.getTime())) {
+        return null;
+      }
+
+      const base = new Intl.DateTimeFormat(locale, {
+        dateStyle: 'long',
+        timeStyle: 'short',
+        timeZone: 'Europe/Chisinau',
+      }).format(start);
+
+      if (event.location) {
+        return `${base} · ${event.location}`;
+      }
+
+      if (event.remoteJoinUrl) {
+        return `${base} · Online`;
+      }
+
+      return base;
+    };
+
+    const setPendingState = () => {
+      if (observeState) {
+        observeState.textContent = pendingLabel;
+      }
+      if (bottomObserve) {
+        bottomObserve.classList.add('hidden');
+        bottomObserve.replaceChildren();
+      }
+      if (pendingBodyCard) {
+        pendingBodyCard.classList.remove('hidden');
+      }
+    };
+
+    const hydrate = async () => {
+      if (!feedUrl) return;
+      try {
+        const response = await fetch(feedUrl, { mode: 'cors' });
+        if (!response.ok) {
+          setPendingState();
+          return;
+        }
+
+        const feed = await response.json();
+        const nextEvent = Array.isArray(feed?.upcomingEvents) ? feed.upcomingEvents[0] : null;
+
+        if (schedule) {
+          const nextSchedule = formatSchedule(nextEvent);
+          if (nextSchedule) {
+            schedule.textContent = nextSchedule;
+          }
+        }
+
+        if (feed?.observerUrl && observeState && topActions && bottomObserve) {
+          const topLink = buildObserveLink(feed.observerUrl, true);
+          observeState.replaceWith(topLink);
+          bottomObserve.classList.remove('hidden');
+          bottomObserve.replaceChildren(buildObserveLink(feed.observerUrl, false));
+          if (pendingBodyCard) {
+            pendingBodyCard.classList.add('hidden');
+          }
+        } else {
+          setPendingState();
+          if (observeState && pendingBody) {
+            observeState.setAttribute('title', pendingBody);
+          }
+        }
+
+        if (feed?.governanceUrl && fullPageLink instanceof HTMLAnchorElement) {
+          fullPageLink.href = feed.governanceUrl;
+          fullPageLink.textContent = fullPageLabel;
+        } else if (fullPageLink instanceof HTMLAnchorElement) {
+          fullPageLink.href = governanceUrl;
+        }
+      } catch (error) {
+        console.error('Failed to hydrate meeting launch page', error);
+        setPendingState();
+      }
+    };
+
+    hydrate();
+  })();
+</script>
 
 <script is:inline define:vars={{ embedId }}>
   (() => {
