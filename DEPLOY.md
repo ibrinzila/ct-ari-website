@@ -61,10 +61,15 @@ Edit or add documents there, then update the document index pages in `src/pages/
 
 ---
 
-## Step 6 — Add your Google Form link
+## Step 6 — Verify the governance application feed
 
-In `src/pages/ro/aplica.astro` and `src/pages/ru/aplica.astro`, replace:
-```
-https://forms.gle/qBzpkRu39W9Hw8yk7
-```
-with your actual Google Form URL if it changes.
+The public apply pages no longer use a hardcoded Google Form.
+
+They hydrate the real governance application route from the Dopomoha public feed:
+- `src/components/GovernanceApplyPage.astro`
+- `src/data/meetingLaunch.ts`
+
+Before go-live, verify:
+1. `meetingLaunchConfig.governanceFeedUrl` points to the correct live body feed.
+2. that feed returns a non-empty `applicationUrl`.
+3. the fallback route still matches the live governance apply path for the same body.

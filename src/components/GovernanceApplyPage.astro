@@ -1,0 +1,163 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { meetingLaunchConfig, type MeetingLaunchLang } from '@/data/meetingLaunch';
+
+interface StepItem {
+  step: string;
+  title: string;
+  desc: string;
+}
+
+interface Props {
+  lang: MeetingLaunchLang;
+  title: string;
+  description: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  eligibilityTitle: string;
+  eligibilityItems: string[];
+  processTitle: string;
+  processItems: StepItem[];
+  formTitle: string;
+  formBody: string;
+  formButtonLabel: string;
+  formLoadingLabel: string;
+  formFallbackLabel: string;
+  formHelpLabel: string;
+}
+
+const {
+  title,
+  description,
+  heroTitle,
+  heroSubtitle,
+  eligibilityTitle,
+  eligibilityItems,
+  processTitle,
+  processItems,
+  formTitle,
+  formBody,
+  formButtonLabel,
+  formLoadingLabel,
+  formFallbackLabel,
+  formHelpLabel,
+} = Astro.props;
+
+const fallbackApplyUrl = `${meetingLaunchConfig.governanceUrl.replace(/\/$/, '')}/apply`;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="bg-brand-blue text-white py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">{heroTitle}</h1>
+      <p class="text-blue-200 text-lg">{heroSubtitle}</p>
+    </div>
+  </section>
+
+  <section class="py-16 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold text-brand-blue mb-6">{eligibilityTitle}</h2>
+    <ul class="space-y-3 mb-12">
+      {eligibilityItems.map((item) => (
+        <li class="flex items-start gap-3 text-gray-700">
+          <span class="text-brand-amber font-bold mt-0.5">✓</span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="text-2xl font-bold text-brand-blue mb-6">{processTitle}</h2>
+    <div class="space-y-4 mb-12">
+      {processItems.map(({ step, title: itemTitle, desc }) => (
+        <div class="flex gap-5 items-start bg-brand-gray rounded-xl p-5">
+          <div class="text-3xl font-extrabold text-brand-amber/30 leading-none">{step}</div>
+          <div>
+            <div class="font-bold text-brand-blue">{itemTitle}</div>
+            <div class="text-sm text-gray-600">{desc}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div
+      class="bg-brand-amber/10 border-2 border-brand-amber rounded-2xl p-8 text-center"
+      data-governance-apply-card
+      data-feed-url={meetingLaunchConfig.governanceFeedUrl}
+      data-fallback-apply-url={fallbackApplyUrl}
+      data-button-label={formButtonLabel}
+      data-fallback-note={formFallbackLabel}
+    >
+      <h3 class="text-xl font-bold text-brand-blue mb-2">{formTitle}</h3>
+      <p class="text-gray-600 text-sm mb-4">{formBody}</p>
+      <p class="text-xs uppercase tracking-[0.2em] text-brand-blue/70 mb-6">{formHelpLabel}</p>
+      <a
+        href={fallbackApplyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-governance-apply-link
+        class="inline-flex items-center px-8 py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blueLight transition-colors shadow-lg"
+      >
+        {formLoadingLabel}
+      </a>
+      <p class="mt-4 text-sm text-gray-500" data-governance-apply-note>{formFallbackLabel}</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  (() => {
+    const card = document.querySelector('[data-governance-apply-card]');
+    if (!card) return;
+
+    const feedUrl = card.getAttribute('data-feed-url');
+    const fallbackApplyUrl = card.getAttribute('data-fallback-apply-url') || '/';
+    const buttonLabel = card.getAttribute('data-button-label') || 'Open application';
+    const fallbackNote = card.getAttribute('data-fallback-note') || '';
+    const link = card.querySelector('[data-governance-apply-link]');
+    const note = card.querySelector('[data-governance-apply-note]');
+    if (!(link instanceof HTMLAnchorElement)) return;
+
+    const setResolvedState = (url) => {
+      link.href = url;
+      link.textContent = buttonLabel;
+      if (note) {
+        note.textContent = '';
+        note.classList.add('hidden');
+      }
+    };
+
+    const setFallbackState = () => {
+      link.href = fallbackApplyUrl;
+      link.textContent = buttonLabel;
+      if (note) {
+        note.textContent = fallbackNote;
+        note.classList.remove('hidden');
+      }
+    };
+
+    const hydrate = async () => {
+      if (!feedUrl) {
+        setFallbackState();
+        return;
+      }
+
+      try {
+        const response = await fetch(feedUrl, { mode: 'cors' });
+        if (!response.ok) {
+          setFallbackState();
+          return;
+        }
+
+        const feed = await response.json();
+        const applicationUrl = typeof feed?.applicationUrl === 'string' && feed.applicationUrl.trim().length > 0
+          ? feed.applicationUrl
+          : fallbackApplyUrl;
+        setResolvedState(applicationUrl);
+      } catch (error) {
+        console.error('Failed to hydrate governance apply URL', error);
+        setFallbackState();
+      }
+    };
+
+    hydrate();
+  })();
+</script>

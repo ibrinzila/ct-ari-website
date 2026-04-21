@@ -1,35 +1,30 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import GovernanceApplyPage from '@/components/GovernanceApplyPage.astro';
 ---
-<BaseLayout title="Вступить">
-  <section class="bg-brand-blue text-white py-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Вступи в CT-ARI</h1>
-      <p class="text-blue-200 text-lg">Отбор участников — Май 2026</p>
-    </div>
-  </section>
-  <section class="py-16 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-2xl font-bold text-brand-blue mb-6">Критерии отбора</h2>
-    <ul class="space-y-3 mb-12">
-      {[
-        'Принадлежность к этнической группе или выраженный интерес к этническому разнообразию',
-        'Мотивация и готовность к гражданскому участию',
-        'Способность представлять и продвигать интересы молодёжи своей общины',
-        'Возраст: 16–30 лет',
-      ].map(item => (
-        <li class="flex items-start gap-3 text-gray-700">
-          <span class="text-brand-amber font-bold mt-0.5">✓</span>
-          <span>{item}</span>
-        </li>
-      ))}
-    </ul>
-    <div class="bg-brand-amber/10 border-2 border-brand-amber rounded-2xl p-8 text-center">
-      <h3 class="text-xl font-bold text-brand-blue mb-2">Анкета участника</h3>
-      <p class="text-gray-600 text-sm mb-6">Заполни анкету для подачи заявки. Приём заявок — май 2026.</p>
-      <a href="https://forms.gle/qBzpkRu39W9Hw8yk7" target="_blank" rel="noopener noreferrer"
-        class="inline-flex items-center px-8 py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blueLight transition-colors shadow-lg">
-        Заполнить анкету →
-      </a>
-    </div>
-  </section>
-</BaseLayout>
+
+<GovernanceApplyPage
+  lang="ru"
+  title="Вступить"
+  description="Подать заявку на участие в Молодёжном совете CT-ARI"
+  heroTitle="Вступи в CT-ARI"
+  heroSubtitle="Отбор участников — Май 2026"
+  eligibilityTitle="Критерии отбора"
+  eligibilityItems={[
+    'Принадлежность к этнической группе или выраженный интерес к этническому разнообразию',
+    'Мотивация и готовность к гражданскому участию',
+    'Способность представлять и продвигать интересы молодёжи своей общины',
+    'Возраст: 16–30 лет',
+  ]}
+  processTitle="Процесс отбора"
+  processItems={[
+    { step: '01', title: 'Подай заявку', desc: 'Открой публичную governance-форму и заполни заявку.' },
+    { step: '02', title: 'Индивидуальное интервью', desc: 'Отобранные кандидаты будут приглашены на интервью с Комиссией по отбору.' },
+    { step: '03', title: 'Официальное утверждение', desc: 'Подтверждённые участники будут официально утверждены в июне 2026 года.' },
+  ]}
+  formTitle="Форма заявки"
+  formBody="Публичная заявка размещена в governance-пространстве Dopomoha и автоматически определяется по активному органу CT-ARI."
+  formButtonLabel="Открыть заявку →"
+  formLoadingLabel="Форма подготавливается…"
+  formFallbackLabel="Если публичный feed временно не отвечает, fallback-ссылка откроет governance-форму напрямую."
+  formHelpLabel="Публичная governance-форма"
+/>
