@@ -8,6 +8,7 @@ export default defineConfig({
     locales: ['ro', 'ru', 'en'],
     routing: {
       prefixDefaultLocale: true,
+      redirectToDefaultLocale: false,
     },
   },
   site: 'https://tineri-ari.md',

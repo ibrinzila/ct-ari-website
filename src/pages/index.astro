@@ -1,5 +1,91 @@
 ---
-// Root redirect → default locale
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { useTranslations } from '@/i18n/utils';
+const t = useTranslations('ro');
 ---
-<meta http-equiv="refresh" content="0;url=/ro" />
-<script>window.location.replace('/ro');</script>
+
+<BaseLayout title="Acasă" description="Consiliul de Tineret pe lângă Agenția Relații Interetnice — Unitate prin diversitate">
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-brand-blue via-brand-blueLight to-blue-700 text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+      <div class="max-w-3xl">
+        <span class="inline-block bg-brand-amber text-brand-blue text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6">
+          CT-ARI — Republica Moldova
+        </span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+          {t('hero.title')}
+        </h1>
+        <p class="text-lg md:text-xl text-blue-100 leading-relaxed mb-10 max-w-2xl">
+          {t('hero.subtitle')}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="/ro/aplica" class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber hover:bg-brand-amberLight text-brand-blue font-bold text-base rounded-xl transition-colors shadow-lg">
+            {t('hero.cta')} →
+          </a>
+          <a href="/ro/despre" class="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold text-base rounded-xl transition-colors border border-white/20">
+            {t('hero.learn')}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission pillars -->
+  <section class="py-20 bg-brand-gray">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-brand-blue text-center mb-4">Ce facem?</h2>
+      <p class="text-center text-gray-500 mb-12 max-w-xl mx-auto">CT-ARI acționează pe patru direcții principale pentru a transforma diversitatea culturală într-o resursă civică.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { icon: '🗣️', title: 'Reprezentare', desc: 'Vocea tinerilor din minoritățile naționale în fața autorităților statului.' },
+          { icon: '🤝', title: 'Dialog Intercultural', desc: 'Promovăm toleranța și respectul reciproc între diversele grupuri etnice.' },
+          { icon: '🎓', title: 'Abilitare', desc: 'Dezvoltăm competențe de leadership pentru tinerii lideri din regiuni.' },
+          { icon: '📋', title: 'Consultare', desc: 'Oferim expertiză ARI pe probleme specifice tineretului multietnic.' },
+        ].map(({ icon, title, desc }) => (
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="text-4xl mb-4">{icon}</div>
+            <h3 class="font-bold text-brand-blue mb-2">{title}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline / Roadmap -->
+  <section class="py-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-brand-blue text-center mb-12">Roadmap 2026</h2>
+      <div class="space-y-6">
+        {[
+          { date: '22 Aprilie 2026', label: 'Prima ședință de constituire', note: 'Offline — Chișinău', done: true },
+          { date: '23 Aprilie 2026', label: 'Sesiune de informare online', note: 'Pentru regiuni', done: true },
+          { date: 'Mai 2026',        label: 'Colectarea dosarelor',        note: 'Interviuri de selecție', done: false },
+          { date: 'Iunie 2026',      label: 'Validarea oficială a membrilor', note: 'Prima ședință de lucru', done: false },
+        ].map(({ date, label, note, done }) => (
+          <div class="flex gap-4 items-start">
+            <div class={`w-4 h-4 rounded-full mt-1 flex-shrink-0 ${done ? 'bg-brand-amber' : 'bg-gray-200'}`}></div>
+            <div>
+              <div class="text-xs font-semibold text-brand-amber uppercase tracking-wider mb-1">{date}</div>
+              <div class="font-semibold text-gray-900">{label}</div>
+              <div class="text-sm text-gray-500">{note}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="bg-brand-amber py-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-extrabold text-brand-blue mb-4">Ești mândru de rădăcinile tale?</h2>
+      <p class="text-brand-blue/80 mb-8 text-lg">Locul tău este în CT-ARI. Aplică acum pentru selecția din Mai 2026.</p>
+      <a href="/ro/aplica" class="inline-flex items-center px-10 py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blueLight transition-colors text-lg shadow-lg">
+        Aplică acum →
+      </a>
+    </div>
+  </section>
+
+</BaseLayout>
