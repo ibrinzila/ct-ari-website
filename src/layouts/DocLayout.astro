@@ -1,0 +1,139 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Document CT-ARI' } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <article class="doc-shell bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-10 lg:p-12">
+        <slot />
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .doc-shell {
+    line-height: 1.8;
+  }
+
+  .doc-shell :global(h1) {
+    margin: 0 0 1rem;
+    color: #113d67;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1;
+    font-weight: 800;
+  }
+
+  .doc-shell :global(h2) {
+    margin: 2rem 0 1rem;
+    color: #113d67;
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .doc-shell :global(h3) {
+    margin: 1.5rem 0 0.75rem;
+    color: #123b63;
+    font-size: 1.15rem;
+    line-height: 1.3;
+    font-weight: 700;
+  }
+
+  .doc-shell :global(p) {
+    margin: 0.9rem 0;
+    color: #334155;
+  }
+
+  .doc-shell :global(ul),
+  .doc-shell :global(ol) {
+    margin: 0.9rem 0;
+    padding-left: 1.5rem;
+    color: #334155;
+  }
+
+  .doc-shell :global(li) {
+    margin: 0.4rem 0;
+  }
+
+  .doc-shell :global(table) {
+    display: block;
+    width: 100%;
+    margin: 1.5rem 0;
+    border-collapse: collapse;
+    overflow-x: auto;
+  }
+
+  .doc-shell :global(th),
+  .doc-shell :global(td) {
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem 0.9rem;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  .doc-shell :global(th) {
+    background: #f8fafc;
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .doc-shell :global(blockquote) {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    border-left: 4px solid #f59e0b;
+    background: #fffbeb;
+    color: #475569;
+  }
+
+  .doc-shell :global(hr) {
+    margin: 2rem 0;
+    border-color: #e2e8f0;
+  }
+
+  .doc-shell :global(a) {
+    color: #0f4c81;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .doc-shell :global(strong) {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .doc-shell :global(code) {
+    padding: 0.15rem 0.35rem;
+    border-radius: 0.35rem;
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .doc-shell :global(pre) {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: #0f172a;
+    color: #f8fafc;
+  }
+
+  .doc-shell :global(pre code) {
+    padding: 0;
+    background: transparent;
+    color: inherit;
+  }
+
+  .doc-shell :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+</style>

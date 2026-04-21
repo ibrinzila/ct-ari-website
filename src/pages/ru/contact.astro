@@ -1,0 +1,45 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+<BaseLayout title="Контакт">
+  <section class="bg-brand-blue text-white py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Контакт</h1>
+      <p class="text-blue-200 text-lg">Свяжитесь с CT-ARI</p>
+    </div>
+  </section>
+  <section class="py-16 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="bg-brand-gray rounded-2xl p-6 border border-gray-100">
+        <h3 class="font-bold text-brand-blue mb-4">CT-ARI</h3>
+        <ul class="space-y-3 text-sm text-gray-700">
+          <li class="flex items-center gap-3">
+            <span class="text-brand-amber">✉</span>
+            <a href="mailto:contact@tineri-ari.md" class="hover:text-brand-blue transition-colors">contact@tineri-ari.md</a>
+          </li>
+          <li class="flex items-center gap-3">
+            <span class="text-brand-amber">🌐</span>
+            <span>tineri-ari.md</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-brand-amber mt-0.5">📍</span>
+            <span>Республика Молдова, Кишинёв</span>
+          </li>
+        </ul>
+      </div>
+      <div class="bg-brand-gray rounded-2xl p-6 border border-gray-100">
+        <h3 class="font-bold text-brand-blue mb-4">Партнёры</h3>
+        <ul class="space-y-3 text-sm text-gray-700">
+          <li>
+            <div class="font-semibold">Агентство межэтнических отношений (ARI)</div>
+            <div class="text-gray-500 text-xs">Институциональный партнёр</div>
+          </li>
+          <li>
+            <div class="font-semibold">АО Dopomoha</div>
+            <a href="https://dopomoha.org" target="_blank" rel="noopener noreferrer" class="text-brand-blue text-xs hover:underline">dopomoha.org</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

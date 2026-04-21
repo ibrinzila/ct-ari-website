@@ -1,0 +1,29 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+<BaseLayout title="Структура">
+  <section class="bg-brand-blue text-white py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Структура CT-ARI</h1>
+      <p class="text-blue-200 text-lg">Организационная схема и рабочие комиссии</p>
+    </div>
+  </section>
+  <section class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="space-y-8">
+      {[
+        { level: 'Руководство', icon: '👑', desc: 'Председатель, Вице-председатель, Секретарь — избираются прямым голосованием членов Совета.' },
+        { level: 'Генеральная Ассамблея', icon: '🏛️', desc: '15–21 член — представители различных этнических групп и регионов Республики Молдова.' },
+        { level: 'Рабочие Комиссии', icon: '⚙️', desc: '3–5 человек на комиссию: Культура & Образование · Права Человека & Адвокация · Социальные Проекты & Молодёжь.' },
+        { level: 'Стратегические партнёры', icon: '🤝', desc: 'Агентство межэтнических отношений (ARI), АО Dopomoha, Национальное агентство по делам молодёжи.' },
+      ].map(({ level, icon, desc }) => (
+        <div class="flex gap-5 items-start bg-brand-gray rounded-2xl p-6 border border-gray-100">
+          <div class="text-3xl">{icon}</div>
+          <div>
+            <h3 class="font-bold text-brand-blue text-lg mb-1">{level}</h3>
+            <p class="text-gray-600">{desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

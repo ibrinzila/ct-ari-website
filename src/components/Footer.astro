@@ -1,0 +1,62 @@
+---
+import { useTranslations, type Lang } from '@/i18n/utils';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-brand-blue text-white mt-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <!-- Brand -->
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-brand-blue font-bold text-sm">CT</div>
+          <div>
+            <div class="font-bold text-white">CT-ARI</div>
+            <div class="text-xs text-blue-200">tineri-ari.md</div>
+          </div>
+        </div>
+        <p class="text-blue-200 text-sm leading-relaxed">
+          Unitate prin diversitate — Viitorul tinerilor din Republica Moldova
+        </p>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <h3 class="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Navigare</h3>
+        <ul class="space-y-2 text-sm text-blue-200">
+          <li><a href={`/${lang}/despre`} class="hover:text-white transition-colors">{t('nav.about')}</a></li>
+          <li><a href={`/${lang}/structura`} class="hover:text-white transition-colors">{t('nav.structure')}</a></li>
+          <li><a href={`/${lang}/aplica`} class="hover:text-white transition-colors">{t('nav.apply')}</a></li>
+          <li><a href={`/${lang}/documente`} class="hover:text-white transition-colors">{t('nav.documents')}</a></li>
+          <li><a href={`/${lang}/evenimente`} class="hover:text-white transition-colors">{t('nav.events')}</a></li>
+          <li><a href={`/${lang}/contact`} class="hover:text-white transition-colors">{t('nav.contact')}</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h3 class="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{t('contact.title')}</h3>
+        <ul class="space-y-2 text-sm text-blue-200">
+          <li>
+            <a href="mailto:contact@tineri-ari.md" class="hover:text-white transition-colors flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              contact@tineri-ari.md
+            </a>
+          </li>
+          <li class="text-blue-300 text-xs pt-2">{t('footer.partner')}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-blue-700 mt-10 pt-6 text-center text-xs text-blue-300">
+      &copy; {year} CT-ARI. {t('footer.rights')}
+    </div>
+  </div>
+</footer>

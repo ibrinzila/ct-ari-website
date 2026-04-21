@@ -1,0 +1,102 @@
+---
+import { useTranslations, languages, type Lang } from '@/i18n/utils';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const navLinks = [
+  { key: 'nav.about',     slug: 'despre'    },
+  { key: 'nav.structure', slug: 'structura' },
+  { key: 'nav.apply',     slug: 'aplica'    },
+  { key: 'nav.documents', slug: 'documente' },
+  { key: 'nav.events',    slug: 'evenimente'},
+  { key: 'nav.contact',   slug: 'contact'   },
+] as const;
+---
+
+<header class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href={`/${lang}`} class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center text-white font-bold text-sm group-hover:bg-brand-blueLight transition-colors">
+          CT
+        </div>
+        <div class="hidden sm:block">
+          <div class="text-sm font-700 text-brand-blue leading-tight">CT-ARI</div>
+          <div class="text-xs text-gray-500 leading-tight">tineri-ari.md</div>
+        </div>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden md:flex items-center gap-6">
+        {navLinks.map(({ key, slug }) => (
+          <a
+            href={`/${lang}/${slug}`}
+            class="text-sm font-medium text-gray-600 hover:text-brand-blue transition-colors"
+          >
+            {t(key)}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Right side: lang picker + CTA -->
+      <div class="flex items-center gap-3">
+        <!-- Language switcher -->
+        <div class="flex items-center gap-1 text-xs font-medium">
+          {Object.entries(languages).map(([code, label]) => (
+            <a
+              href={`/${code}`}
+              class={`px-2 py-1 rounded transition-colors ${
+                code === lang
+                  ? 'bg-brand-blue text-white'
+                  : 'text-gray-500 hover:text-brand-blue'
+              }`}
+            >
+              {code.toUpperCase()}
+            </a>
+          ))}
+        </div>
+
+        <!-- CTA button -->
+        <a
+          href={`/${lang}/aplica`}
+          class="hidden sm:inline-flex items-center px-4 py-2 bg-brand-amber hover:bg-brand-amberLight text-brand-blue font-semibold text-sm rounded-lg transition-colors"
+        >
+          {t('nav.apply')}
+        </a>
+
+        <!-- Mobile menu button -->
+        <button
+          id="menu-toggle"
+          class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
+          aria-label="Toggle menu"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav id="mobile-menu" class="md:hidden hidden pb-4 border-t border-gray-100 mt-2 pt-2">
+      {navLinks.map(({ key, slug }) => (
+        <a
+          href={`/${lang}/${slug}`}
+          class="block py-2 text-sm font-medium text-gray-600 hover:text-brand-blue"
+        >
+          {t(key)}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  document.getElementById('menu-toggle')?.addEventListener('click', () => {
+    document.getElementById('mobile-menu')?.classList.toggle('hidden');
+  });
+</script>

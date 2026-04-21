@@ -1,0 +1,60 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { useTranslations } from '@/i18n/utils';
+const t = useTranslations('ru');
+---
+
+<BaseLayout title="Главная" description="Молодёжный совет при Агентстве межэтнических отношений — Единство через разнообразие">
+
+  <section class="bg-gradient-to-br from-brand-blue via-brand-blueLight to-blue-700 text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+      <div class="max-w-3xl">
+        <span class="inline-block bg-brand-amber text-brand-blue text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6">
+          CT-ARI — Республика Молдова
+        </span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">{t('hero.title')}</h1>
+        <p class="text-lg md:text-xl text-blue-100 leading-relaxed mb-10 max-w-2xl">{t('hero.subtitle')}</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="/ru/aplica" class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber hover:bg-brand-amberLight text-brand-blue font-bold text-base rounded-xl transition-colors shadow-lg">
+            {t('hero.cta')} →
+          </a>
+          <a href="/ru/despre" class="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold text-base rounded-xl transition-colors border border-white/20">
+            {t('hero.learn')}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 bg-brand-gray">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-brand-blue text-center mb-4">Что мы делаем?</h2>
+      <p class="text-center text-gray-500 mb-12 max-w-xl mx-auto">CT-ARI работает по четырём основным направлениям, превращая культурное разнообразие в гражданский ресурс.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { icon: '🗣️', title: 'Представительство', desc: 'Голос молодёжи национальных меньшинств в органах государственной власти.' },
+          { icon: '🤝', title: 'Межкультурный диалог', desc: 'Продвигаем толерантность и взаимоуважение между этническими группами.' },
+          { icon: '🎓', title: 'Развитие', desc: 'Развиваем лидерские компетенции молодёжи из регионов.' },
+          { icon: '📋', title: 'Консультации', desc: 'Предоставляем экспертизу ARI по вопросам многоэтнической молодёжи.' },
+        ].map(({ icon, title, desc }) => (
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="text-4xl mb-4">{icon}</div>
+            <h3 class="font-bold text-brand-blue mb-2">{title}</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-brand-amber py-16">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-extrabold text-brand-blue mb-4">Гордишься своими корнями?</h2>
+      <p class="text-brand-blue/80 mb-8 text-lg">Твоё место в CT-ARI. Подай заявку на отбор в мае 2026 года.</p>
+      <a href="/ru/aplica" class="inline-flex items-center px-10 py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blueLight transition-colors text-lg shadow-lg">
+        Подать заявку →
+      </a>
+    </div>
+  </section>
+
+</BaseLayout>

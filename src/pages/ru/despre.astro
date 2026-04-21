@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+<BaseLayout title="О нас">
+  <section class="bg-brand-blue text-white py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">О CT-ARI</h1>
+      <p class="text-blue-200 text-lg">Молодёжный совет при Агентстве межэтнических отношений</p>
+    </div>
+  </section>
+  <section class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold text-brand-blue mb-4">Наша миссия</h2>
+    <p class="text-gray-700 leading-relaxed mb-8">Миссия CT-ARI заключается в объединении молодёжи всех этнических групп Республики Молдова на единой платформе для диалога. Мы стремимся превратить наше культурное разнообразие в гражданскую силу, обеспечивая, чтобы голос каждого молодого человека, независимо от его этнической принадлежности, был услышан на самом высоком государственном уровне.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {[
+        { title: 'Представительство', desc: 'Участие молодёжи национальных меньшинств в процессах принятия решений.' },
+        { title: 'Межкультурный диалог', desc: 'Продвижение толерантности и взаимоуважения между этническими группами.' },
+        { title: 'Развитие', desc: 'Развитие лидерских и управленческих компетенций молодых лидеров из регионов.' },
+        { title: 'Консультации', desc: 'Экспертная поддержка Агентства межэтнических отношений по вопросам молодёжи.' },
+      ].map(({ title, desc }) => (
+        <div class="bg-brand-gray rounded-xl p-5 border border-gray-100">
+          <h3 class="font-bold text-brand-blue mb-2">{title}</h3>
+          <p class="text-gray-600 text-sm">{desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
