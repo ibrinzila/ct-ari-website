@@ -1,0 +1,41 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Despre CT-ARI">
+  <section class="bg-brand-blue text-white py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Despre CT-ARI</h1>
+      <p class="text-blue-200 text-lg max-w-2xl">Consiliul de Tineret pe lângă Agenția Relații Interetnice</p>
+    </div>
+  </section>
+
+  <section class="py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="prose prose-lg max-w-none">
+      <h2 class="text-2xl font-bold text-brand-blue mb-4">Misiunea Noastră</h2>
+      <p class="text-gray-700 leading-relaxed mb-8">
+        Misiunea CT-ARI este de a uni tinerii din toate grupurile etnice ale Republicii Moldova într-o platformă unică de dialog.
+        Ne propunem să transformăm diversitatea noastră culturală într-o forță civică, asigurându-ne că vocea fiecărui tânăr,
+        indiferent de etnie, este ascultată la cel mai înalt nivel guvernamental.
+      </p>
+
+      <h2 class="text-2xl font-bold text-brand-blue mb-4">Scopul Creării</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        {[
+          { title: 'Reprezentare', desc: 'Asigurarea participării tinerilor din minoritățile naționale la procesele decizionale.' },
+          { title: 'Dialog Intercultural', desc: 'Promovarea toleranței și a respectului reciproc între diversele grupuri etnice.' },
+          { title: 'Abilitare', desc: 'Dezvoltarea competențelor de leadership și management pentru tinerii lideri din regiuni.' },
+          { title: 'Consultare', desc: 'Oferirea de expertiză Agenției Relații Interetnice pe probleme specifice tineretului.' },
+        ].map(({ title, desc }) => (
+          <div class="bg-brand-gray rounded-xl p-5 border border-gray-100">
+            <h3 class="font-bold text-brand-blue mb-2">{title}</h3>
+            <p class="text-gray-600 text-sm">{desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <h2 class="text-2xl font-bold text-brand-blue mb-4">Parteneri Strategici</h2>
+      <p class="text-gray-700">CT-ARI funcționează în parteneriat cu <strong>Agenția Relații Interetnice (ARI)</strong>, <strong>AO Dopomoha</strong> și <strong>Agenția Națională de Tineret</strong>.</p>
+    </div>
+  </section>
+</BaseLayout>

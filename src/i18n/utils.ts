@@ -15,7 +15,13 @@ export function useTranslations(lang: Lang) {
 }
 
 export function getRouteForLang(lang: Lang, route: string): string {
-  return `/${lang}/${route}`.replace(/\/$/, '') || `/${lang}`;
+  const cleanRoute = route.replace(/^\/+/, '').replace(/\/+$/, '');
+
+  if (lang === defaultLang) {
+    return cleanRoute ? `/${cleanRoute}` : '/';
+  }
+
+  return cleanRoute ? `/${lang}/${cleanRoute}` : `/${lang}`;
 }
 
 export { languages };

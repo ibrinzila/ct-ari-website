@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { useTranslations } from '@/i18n/utils';
+import { useTranslations, getRouteForLang } from '@/i18n/utils';
 const t = useTranslations('ro');
+const route = (path: string) => getRouteForLang('ro', path);
 ---
 
 <BaseLayout title="Acasă" description="Consiliul de Tineret pe lângă Agenția Relații Interetnice — Unitate prin diversitate">
@@ -20,10 +21,10 @@ const t = useTranslations('ro');
           {t('hero.subtitle')}
         </p>
         <div class="flex flex-col sm:flex-row gap-4">
-          <a href="/ro/aplica" class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber hover:bg-brand-amberLight text-brand-blue font-bold text-base rounded-xl transition-colors shadow-lg">
+          <a href={route('aplica')} class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber hover:bg-brand-amberLight text-brand-blue font-bold text-base rounded-xl transition-colors shadow-lg">
             {t('hero.cta')} →
           </a>
-          <a href="/ro/despre" class="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold text-base rounded-xl transition-colors border border-white/20">
+          <a href={route('despre')} class="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold text-base rounded-xl transition-colors border border-white/20">
             {t('hero.learn')}
           </a>
         </div>
@@ -82,7 +83,7 @@ const t = useTranslations('ro');
     <div class="max-w-3xl mx-auto px-4 text-center">
       <h2 class="text-3xl font-extrabold text-brand-blue mb-4">Ești mândru de rădăcinile tale?</h2>
       <p class="text-brand-blue/80 mb-8 text-lg">Locul tău este în CT-ARI. Aplică acum pentru selecția din Mai 2026.</p>
-      <a href="/ro/aplica" class="inline-flex items-center px-10 py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blueLight transition-colors text-lg shadow-lg">
+      <a href={route('aplica')} class="inline-flex items-center px-10 py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blueLight transition-colors text-lg shadow-lg">
         Aplică acum →
       </a>
     </div>

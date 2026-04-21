@@ -1,5 +1,5 @@
 ---
-import { useTranslations, type Lang } from '@/i18n/utils';
+import { useTranslations, type Lang, getRouteForLang } from '@/i18n/utils';
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
@@ -29,12 +29,12 @@ const year = new Date().getFullYear();
       <div>
         <h3 class="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Navigare</h3>
         <ul class="space-y-2 text-sm text-blue-200">
-          <li><a href={`/${lang}/despre`} class="hover:text-white transition-colors">{t('nav.about')}</a></li>
-          <li><a href={`/${lang}/structura`} class="hover:text-white transition-colors">{t('nav.structure')}</a></li>
-          <li><a href={`/${lang}/aplica`} class="hover:text-white transition-colors">{t('nav.apply')}</a></li>
-          <li><a href={`/${lang}/documente`} class="hover:text-white transition-colors">{t('nav.documents')}</a></li>
-          <li><a href={`/${lang}/evenimente`} class="hover:text-white transition-colors">{t('nav.events')}</a></li>
-          <li><a href={`/${lang}/contact`} class="hover:text-white transition-colors">{t('nav.contact')}</a></li>
+          <li><a href={getRouteForLang(lang, 'despre')} class="hover:text-white transition-colors">{t('nav.about')}</a></li>
+          <li><a href={getRouteForLang(lang, 'structura')} class="hover:text-white transition-colors">{t('nav.structure')}</a></li>
+          <li><a href={getRouteForLang(lang, 'aplica')} class="hover:text-white transition-colors">{t('nav.apply')}</a></li>
+          <li><a href={getRouteForLang(lang, 'documente')} class="hover:text-white transition-colors">{t('nav.documents')}</a></li>
+          <li><a href={getRouteForLang(lang, 'evenimente')} class="hover:text-white transition-colors">{t('nav.events')}</a></li>
+          <li><a href={getRouteForLang(lang, 'contact')} class="hover:text-white transition-colors">{t('nav.contact')}</a></li>
         </ul>
       </div>
 

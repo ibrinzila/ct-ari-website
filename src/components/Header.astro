@@ -1,5 +1,5 @@
 ---
-import { useTranslations, languages, type Lang } from '@/i18n/utils';
+import { useTranslations, languages, type Lang, getRouteForLang } from '@/i18n/utils';
 
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
@@ -20,7 +20,7 @@ const navLinks = [
     <div class="flex items-center justify-between h-16">
 
       <!-- Logo -->
-      <a href={`/${lang}`} class="flex items-center gap-3 group">
+      <a href={getRouteForLang(lang, '')} class="flex items-center gap-3 group">
         <div class="w-9 h-9 rounded-lg bg-brand-blue flex items-center justify-center text-white font-bold text-sm group-hover:bg-brand-blueLight transition-colors">
           CT
         </div>
@@ -34,7 +34,7 @@ const navLinks = [
       <nav class="hidden md:flex items-center gap-6">
         {navLinks.map(({ key, slug }) => (
           <a
-            href={`/${lang}/${slug}`}
+            href={getRouteForLang(lang, slug)}
             class="text-sm font-medium text-gray-600 hover:text-brand-blue transition-colors"
           >
             {t(key)}
@@ -48,7 +48,7 @@ const navLinks = [
         <div class="flex items-center gap-1 text-xs font-medium">
           {Object.entries(languages).map(([code, label]) => (
             <a
-              href={`/${code}`}
+              href={getRouteForLang(code as Lang, '')}
               class={`px-2 py-1 rounded transition-colors ${
                 code === lang
                   ? 'bg-brand-blue text-white'
@@ -62,7 +62,7 @@ const navLinks = [
 
         <!-- CTA button -->
         <a
-          href={`/${lang}/aplica`}
+          href={getRouteForLang(lang, 'aplica')}
           class="hidden sm:inline-flex items-center px-4 py-2 bg-brand-amber hover:bg-brand-amberLight text-brand-blue font-semibold text-sm rounded-lg transition-colors"
         >
           {t('nav.apply')}
@@ -85,7 +85,7 @@ const navLinks = [
     <nav id="mobile-menu" class="md:hidden hidden pb-4 border-t border-gray-100 mt-2 pt-2">
       {navLinks.map(({ key, slug }) => (
         <a
-          href={`/${lang}/${slug}`}
+          href={getRouteForLang(lang, slug)}
           class="block py-2 text-sm font-medium text-gray-600 hover:text-brand-blue"
         >
           {t(key)}
