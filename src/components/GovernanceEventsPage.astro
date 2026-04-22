@@ -78,9 +78,21 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
     const list = root.querySelector('[data-events-list]');
     const empty = root.querySelector('[data-events-empty]');
 
+    const parseFeedDate = (value) => {
+      if (!value) {
+        return null;
+      }
+
+      const normalized = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value)
+        ? value
+        : `${value}Z`;
+      const parsed = new Date(normalized);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    };
+
     const formatDate = (value) => {
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) {
+      const date = parseFeedDate(value);
+      if (!date) {
         return value || '';
       }
 

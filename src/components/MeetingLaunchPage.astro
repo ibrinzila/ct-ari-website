@@ -156,13 +156,25 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
       return link;
     };
 
+    const parseFeedDate = (value) => {
+      if (!value) {
+        return null;
+      }
+
+      const normalized = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value)
+        ? value
+        : `${value}Z`;
+      const parsed = new Date(normalized);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    };
+
     const formatSchedule = (event) => {
       if (!event?.scheduledStartUtc) {
         return null;
       }
 
-      const start = new Date(event.scheduledStartUtc);
-      if (Number.isNaN(start.getTime())) {
+      const start = parseFeedDate(event.scheduledStartUtc);
+      if (!start) {
         return null;
       }
 
@@ -228,8 +240,8 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
 
       const meta = document.createElement('div');
       meta.className = 'mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-500';
-      const scheduled = event.scheduledStartUtc ? new Date(event.scheduledStartUtc) : null;
-      if (scheduled && !Number.isNaN(scheduled.getTime())) {
+      const scheduled = parseFeedDate(event.scheduledStartUtc);
+      if (scheduled) {
         meta.appendChild(document.createTextNode(new Intl.DateTimeFormat(locale, {
           dateStyle: 'long',
           timeStyle: 'short',
