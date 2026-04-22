@@ -11,6 +11,7 @@ interface Props {
   typeMeetingLabel: string;
   typeSessionLabel: string;
   observeLabel: string;
+  detailsLabel: string;
   fullPageLabel: string;
 }
 
@@ -23,6 +24,7 @@ const {
   typeMeetingLabel,
   typeSessionLabel,
   observeLabel,
+  detailsLabel,
   fullPageLabel,
 } = Astro.props;
 
@@ -48,6 +50,7 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
     data-type-meeting={typeMeetingLabel}
     data-type-session={typeSessionLabel}
     data-observe-label={observeLabel}
+    data-details-label={detailsLabel}
     data-full-page-label={fullPageLabel}
   >
     <div class="rounded-2xl border border-brand-blue/10 bg-brand-gray p-8 text-center text-gray-500" data-events-loading>
@@ -69,6 +72,7 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
     const typeMeeting = root.getAttribute('data-type-meeting') || 'Meeting';
     const typeSession = root.getAttribute('data-type-session') || 'Session';
     const observeLabel = root.getAttribute('data-observe-label') || 'Observe online';
+    const detailsLabel = root.getAttribute('data-details-label') || 'Open meeting details';
     const fullPageLabel = root.getAttribute('data-full-page-label') || 'Open governance';
     const loading = root.querySelector('[data-events-loading]');
     const list = root.querySelector('[data-events-list]');
@@ -102,9 +106,15 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
       badge.textContent = event.sourceKind === 'governance-meeting' ? typeMeeting : typeSession;
       wrapper.appendChild(badge);
 
-      const title = document.createElement('h3');
+      const title = document.createElement(event.detailsUrl ? 'a' : 'h3');
       title.className = 'font-bold text-gray-900 text-lg mb-1';
       title.textContent = event.title;
+      if (title instanceof HTMLAnchorElement) {
+        title.href = event.detailsUrl;
+        title.target = '_blank';
+        title.rel = 'noreferrer noopener';
+        title.className += ' no-underline hover:underline';
+      }
       wrapper.appendChild(title);
 
       const meta = document.createElement('div');
@@ -127,11 +137,11 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
       actions.className = 'mt-4 flex flex-col gap-3 sm:flex-row';
 
       const governanceLink = document.createElement('a');
-      governanceLink.href = governanceUrl;
+      governanceLink.href = event.detailsUrl || governanceUrl;
       governanceLink.target = '_blank';
       governanceLink.rel = 'noreferrer noopener';
       governanceLink.className = 'inline-flex items-center justify-center rounded-2xl bg-brand-blue px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-blueLight';
-      governanceLink.textContent = fullPageLabel;
+      governanceLink.textContent = event.detailsUrl ? detailsLabel : fullPageLabel;
       actions.appendChild(governanceLink);
 
       if (event.remoteJoinUrl) {

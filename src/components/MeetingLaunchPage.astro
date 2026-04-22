@@ -22,6 +22,7 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
       data-governance-url={governanceUrl}
       data-locale={locale}
       data-observe-label={content.observeLabel}
+      data-details-label={content.detailsLabel}
       data-apply-label={content.applyLabel}
       data-apply-url={applyUrl}
       data-full-page-label={content.fullPageLabel}
@@ -83,7 +84,7 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
         <div class="space-y-4">
           <div>
             <p class="text-xs font-semibold uppercase tracking-[0.24em] text-brand-amber">{content.meetingListTitle}</p>
-            <p class="mt-2 text-sm leading-6 text-gray-600">{content.embedBody}</p>
+            <p class="mt-2 text-sm leading-6 text-gray-600">{content.meetingPageNotice}</p>
           </div>
           <div id={embedId} class="space-y-4">
             <div class="flex min-h-[220px] items-center justify-center rounded-2xl border border-dashed border-brand-blue/15 bg-white px-6 py-10 text-center text-sm leading-6 text-gray-500">
@@ -130,6 +131,7 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
     const observeLabel = root.getAttribute('data-observe-label') || 'Observe online';
     const fullPageLabel = root.getAttribute('data-full-page-label') || 'Open governance';
     const applyLabel = root.getAttribute('data-apply-label') || 'Apply / participate';
+    const detailsLabel = root.getAttribute('data-details-label') || 'Open meeting details';
     const applyUrl = root.getAttribute('data-apply-url') || '/';
     const pendingLabel = root.getAttribute('data-pending-label') || 'Link pending';
     const pendingBody = root.getAttribute('data-pending-body') || '';
@@ -213,9 +215,15 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
       badge.textContent = event.sourceKind === 'governance-meeting' ? 'Ședință' : 'Sesiune';
       card.appendChild(badge);
 
-      const title = document.createElement('h3');
+      const title = document.createElement(event.detailsUrl ? 'a' : 'h3');
       title.className = 'mt-3 text-lg font-bold text-brand-blue';
       title.textContent = event.title || '';
+      if (title instanceof HTMLAnchorElement) {
+        title.href = event.detailsUrl;
+        title.target = '_blank';
+        title.rel = 'noreferrer noopener';
+        title.className += ' no-underline hover:underline';
+      }
       card.appendChild(title);
 
       const meta = document.createElement('div');
@@ -255,11 +263,11 @@ const locale = lang === 'ru' ? 'ru-RU' : 'ro-MD';
       }
 
       const full = document.createElement('a');
-      full.href = governanceUrl;
+      full.href = event.detailsUrl || governanceUrl;
       full.target = '_blank';
       full.rel = 'noreferrer noopener';
       full.className = 'inline-flex items-center justify-center rounded-2xl border border-brand-blue/15 bg-white px-5 py-3 text-sm font-semibold text-brand-blue transition-colors hover:border-brand-blue hover:bg-brand-gray';
-      full.textContent = fullPageLabel;
+      full.textContent = event.detailsUrl ? detailsLabel : fullPageLabel;
       actions.appendChild(full);
 
       card.appendChild(actions);
